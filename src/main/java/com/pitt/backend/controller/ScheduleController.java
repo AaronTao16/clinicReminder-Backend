@@ -21,19 +21,17 @@ public class ScheduleController{
     @Autowired
     JdbcTemplate jdbcTemplate;
 
-    //    @Scheduled(cron="0 0 0 * * ? *") //每天00:00:00执行一次
-//    @Scheduled(cron="0 15 15,20 * * 2005 *") //2005年每天15点整合和20点整每隔15分钟执行一次
-//   @Scheduled(fixedDelay=1000) //距离上次执行结果每1s执行一次
-//   @Scheduled(initialDelay=1000，fixdRate=6000) //第一次延迟1s，之后每隔6s执行一次
-    @Scheduled(fixedRate = 60000) //距离项目启动每1分钟执行一次
+    //    @Scheduled(cron="0 0 0 * * ? *") //00:00:00 everyday
+//    @Scheduled(cron="0 15 15,20 * * 2020 *") //2020 15:00 and 20:00 /every 15mins
+//   @Scheduled(fixedDelay=1000) //every 1s
+//   @Scheduled(initialDelay=1000，fixdRate=6000) //delay 1s，after every 6s
+    @Scheduled(fixedRate = 60000) //every minute
     public void expireTimeJudge(){
-        //首先拿到所有的过期且expire=0的条目
         List<ClinicalOrder> orderList = orderRepository.getByETime(new Date());
         if(orderList.isEmpty()){
             System.out.println("No order need to update");
             return;
         }
-        //遍历更新expire=1
         for(ClinicalOrder order : orderList){
             String sql = String.format(
                     "UPDATE `clinic_order` SET `order_status` = 2 WHERE `ord_id` = '%d'", order.getOrdId()
