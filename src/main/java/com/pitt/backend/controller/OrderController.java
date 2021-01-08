@@ -35,6 +35,42 @@ public class OrderController {
     @Autowired
     OrderRepository orderRepository;
 
+    @GetMapping("ordData/{docId}")
+    public Map<String, Integer> getordData(@PathVariable String docId){
+        Long id = Long.parseLong(docId);
+        Map<String, Integer> map = new HashMap<>();
+        RowCallbackHandler rowCallbackHandler1 = new RowCallbackHandler() {
+
+            @Override
+            public void processRow(ResultSet resultSet) throws SQLException {
+                map.put( "totalReminderDay", resultSet.getInt("totalReminderDay"));
+            }
+        };
+        RowCallbackHandler rowCallbackHandler2 = new RowCallbackHandler() {
+
+            @Override
+            public void processRow(ResultSet resultSet) throws SQLException {
+                map.put( "doneReminderDay", resultSet.getInt("doneReminderDay"));
+            }
+        };
+        RowCallbackHandler rowCallbackHandler3 = new RowCallbackHandler() {
+
+            @Override
+            public void processRow(ResultSet resultSet) throws SQLException {
+                map.put( "delayReminderMon", resultSet.getInt("delayReminderMon"));
+            }
+        };
+        String query1 = String.format("SELECT count(*) totalReminderDay FROM clinic_order co where co.doc_id = %d and Date(co.end_time) = curdate()", id);
+        String query2 = String.format("SELECT count(*) doneReminderDay FROM clinic_order co where co.doc_id = %d and Date(co.end_time) = curdate() and co.order_status = 3", id);
+        String query3 = String.format("SELECT count(*) delayReminderMon FROM clinic_order co where co.doc_id = %d and co.order_status = 2 and month(co.end_time) = month(curdate())", id);
+        jdbcTemplate.query(query1, rowCallbackHandler1);
+        jdbcTemplate.query(query2, rowCallbackHandler2);
+        jdbcTemplate.query(query3, rowCallbackHandler3);
+//        System.out.println();
+        System.out.println(map);
+        return map;
+    }
+
     /**
      * Create Order Method
      * @param clinicalOrder

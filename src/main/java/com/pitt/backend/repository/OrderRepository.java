@@ -23,8 +23,6 @@ public interface OrderRepository extends CrudRepository<ClinicalOrder, Long> {
 //    List<Order> checkOrderHistory(Long patient_patId, int status, Date date);
 
     @Query("SELECT NEW ClinicalOrder (o.ordId, o.ordTitle, o.sTime, o.eTime, o.cTime, o.duration, o.des, o.pro, o.status, o.fTime) FROM ClinicalOrder o WHERE o.patient.patId = ?1 AND o.status = ?2  AND o.cTime >= ?3 ORDER BY o.cTime desc , o.pro asc")
-//    @Query(value = "SELECT Date(co.create_time) as cDate, count(co.ord_id) FROM clinic_order co where co.pat_id = ?1 and co.order_status = ?2 co.cTime >= ?3 group by cDate",
-//    nativeQuery = true)
     List<ClinicalOrder> getByPatId(Long PatId, int status, Date date);
 
     @Query("SELECT NEW ClinicalOrder (o.ordId, o.ordTitle, o.sTime, o.eTime, o.cTime, o.duration, o.des, o.pro, o.status, o.fTime) FROM ClinicalOrder o WHERE o.patient.patId = ?1 ORDER BY o.status asc,o.eTime asc, o.duration asc, o.cTime desc, o.pro asc")

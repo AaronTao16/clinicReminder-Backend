@@ -5,9 +5,14 @@ import com.pitt.backend.repository.PatientRepository;
 import com.pitt.backend.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("patient")
@@ -32,6 +37,13 @@ public class PatientController {
     public Patient login(@RequestBody Patient patient) {
         System.out.println(patient.getUserName());
         return this.patientService.login(patient.getUserName(), patient.getPassword());
+    }
+
+    @GetMapping("patNum/{docId}")
+    public int getByPatNumber(@PathVariable("docId") String docId){
+        Long id = Long.parseLong(docId);
+
+        return patientRepository.countByDoctorDocId(id);
     }
 
 //    @GetMapping("{id}")

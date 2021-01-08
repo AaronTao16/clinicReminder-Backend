@@ -21,4 +21,6 @@ public interface PatientRepository extends CrudRepository<Patient, Long> {
 
     @Query("select new Patient(p.patId, p.userName, p.password, p.fName, p.lName, p.hCount, p.mCount, p.lCount) from Patient p where p.userName = ?1")
     Patient findByUserName(String username);
+
+    int countByDoctorDocId(Long id);
 }
